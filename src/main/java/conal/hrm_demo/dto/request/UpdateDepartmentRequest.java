@@ -13,10 +13,10 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class UpdateDepartmentRequest {
     private Long id;
-    @NotBlank(message = ParamError.FIELD_NAME)
     private String name;
     private String address;
     private int maxNoOfEmployee;
     private int currentNoOfEmployee;
     private boolean isActive;
+    private String code;
 }

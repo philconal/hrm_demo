@@ -17,4 +17,5 @@ public class CreateDepartmentRequest {
     private String address;
     private int maxNoOfEmployee;
     private int currentNoOfEmployee;
+    private String code;
 }

@@ -31,14 +31,14 @@ public class DepartmentController {
     @RequestMapping(value = "/departments", method = RequestMethod.POST)
     public ApplicationDataResponse<Department> addDepartment(@Valid  @RequestBody CreateDepartmentRequest request) {
         Department department = Mapper.map(request);
-        return new ApplicationDataResponse<>(HttpStatus.OK, departmentService.saveDepartment(department));
+        return new ApplicationDataResponse<>(HttpStatus.OK, departmentService.createDepartment(department));
     }
 
     @RequestMapping(value = "/departments/{id}", method = RequestMethod.PUT)
     public ApplicationDataResponse<Department> updateDepartment(@PathVariable("id") Long id, @Valid @RequestBody UpdateDepartmentRequest request) {
         Department department = departmentService.getDepartmentByID(id);
         Department convert = Mapper.map(department, request);
-        return new ApplicationDataResponse<>(HttpStatus.OK, departmentService.saveDepartment(convert));
+        return new ApplicationDataResponse<>(HttpStatus.OK, departmentService.updateDepartment(convert));
     }
 
     @RequestMapping(value = "/departments/{id}", method = RequestMethod.DELETE)

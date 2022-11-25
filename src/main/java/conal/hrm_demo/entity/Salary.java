@@ -1,10 +1,12 @@
 package conal.hrm_demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import conal.hrm_demo.util.Constant;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Data
@@ -19,14 +21,16 @@ public class Salary {
     private double amount;
     private double bonus;
     private String note;
-
-    private LocalDate datePaid;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    private String code;
+    private Date datePaid;
+    @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
+    private Date createdDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
+    private Date updatedDate;
+    @ManyToOne
+    @JoinColumn(name = "salary_id")
     @JsonIgnore
-    @ElementCollection(fetch = FetchType.EAGER)
     private Employee employee;
 
 }

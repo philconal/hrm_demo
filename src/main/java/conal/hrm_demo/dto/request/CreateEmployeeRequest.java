@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 public class CreateEmployeeRequest {
@@ -17,8 +17,9 @@ public class CreateEmployeeRequest {
     @NotBlank(message = "Email should not be blank")
     private String email;
     private String address;
-    private LocalDate startedDate;
-    private LocalDate endedDate;
+    private Date startedDate;
+    private Date endedDate;
     private Long departmentId;
+    private String code;
 
 }

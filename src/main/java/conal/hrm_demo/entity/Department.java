@@ -1,19 +1,21 @@
 package conal.hrm_demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import conal.hrm_demo.dto.ParamError;
+import conal.hrm_demo.util.Constant;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Department implements Serializable {
@@ -22,19 +24,23 @@ public class Department implements Serializable {
     private Long id;
     @NotBlank(message = ParamError.FIELD_NAME)
     private String name;
+    @NotBlank(message = ParamError.FIELD_NAME,groups = {})
+    private String address;
     @NotBlank(message = ParamError.FIELD_NAME)
     @Column(unique = true, nullable = false)
     private String code;
-    private String address;
     private int maxNoOfEmployee;
     private int currentNoOfEmployee;
     private boolean isActive = true;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
+    @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
+    private Date createdDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
+    private Date updatedDate;
     @OneToMany(
             cascade = CascadeType.ALL,
             mappedBy = "department"
     )
-    @JsonIgnore
     private List<Employee> employees;
+
 }
