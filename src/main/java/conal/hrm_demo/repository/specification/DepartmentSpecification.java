@@ -1,6 +1,7 @@
 package conal.hrm_demo.repository.specification;
 
 import conal.hrm_demo.entity.Department;
+import conal.hrm_demo.entity.enums.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ import java.util.List;
 public class DepartmentSpecification {
     public Specification<Department> doFilter(
             String name,
-            boolean sort,
+            String direction,
             String sortField,
             String address,
             String code
@@ -22,9 +23,7 @@ public class DepartmentSpecification {
         ) -> {
             cq.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
-
             predicates.add(cb.equal(clazzRoot.get("isActive"), true));
-
             addFilterByProperty(predicates,clazzRoot,cq,cb,code,"code");
             addFilterByProperty(predicates,clazzRoot,cq,cb,name,"name");
             addFilterByProperty(predicates,clazzRoot,cq,cb,address,"address");
@@ -34,15 +33,15 @@ public class DepartmentSpecification {
                 case "code" -> clazzRoot.get("code");
                 default -> clazzRoot.get("createdDate");
             };
-
-            if (sort) {
-                cq.orderBy(cb.asc(orderClause));
-            } else {
-                cq.orderBy(cb.desc(orderClause));
+            if (!direction.equals(Direction.UNSORTED.getDirection())) {
+                if (direction.equals(Direction.ASC.getDirection())) {
+                    cq.orderBy(cb.asc(orderClause));
+                }
+                if (direction.equals(Direction.DESC.getDirection())) {
+                    cq.orderBy(cb.desc(orderClause));
+                }
             }
-
             return cb.and(predicates.toArray(new Predicate[]{}));
-
         };
     }
 
@@ -50,7 +49,7 @@ public class DepartmentSpecification {
         if (property != null && !property.trim().isEmpty()) {
             String propertySearch = property.trim();
             predicates.add(cb.or(
-                    cb.like(clazzRoot.get(queryName), "%" + propertySearch + "%")));
+                    cb.like(cb.lower(clazzRoot.get(queryName)), "%" + propertySearch.toLowerCase() + "%")));
         }
     }
 }

@@ -118,7 +118,7 @@ public class ExceptionHandling implements ErrorController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
+    public ResponseEntity<ApplicationExceptionResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -126,7 +126,7 @@ public class ExceptionHandling implements ErrorController {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, "Field " + fieldName + errorMessage.replace("{fieldName}", ""));
         });
-        return errors;
+        return createHttpResponse(BAD_REQUEST, "");
     }
 
 }

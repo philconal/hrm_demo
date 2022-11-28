@@ -3,9 +3,12 @@ package conal.hrm_demo.controller;
 import conal.hrm_demo.controller.helper.Mapper;
 import conal.hrm_demo.dto.request.CreateDepartmentRequest;
 import conal.hrm_demo.dto.request.DepartmentFilterRequest;
+import conal.hrm_demo.dto.request.MoveEmployeeRequest;
 import conal.hrm_demo.dto.request.UpdateDepartmentRequest;
 import conal.hrm_demo.dto.response.ApplicationDataResponse;
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Department;
+import conal.hrm_demo.entity.enums.Direction;
 import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.services.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +30,16 @@ public class DepartmentController {
     }
 
     @RequestMapping(value = "/departments/paging", method = RequestMethod.GET)
-    public ApplicationDataResponse<Page<Department>> getAllDepartments(
+    public ApplicationDataResponse<CustomPage<Department>> getAllDepartments(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "code", required = false) String code,
-            @RequestParam(value = "page") int page,
-            @RequestParam(value = "size") int size,
-            @RequestParam(value = "sort", required = false, defaultValue = "false") boolean sort,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "direction",  defaultValue = "UNSORTED") Direction direction,
             @RequestParam(value = "sort_field", required = false, defaultValue = "") String sortField
     ) {
-        DepartmentFilterRequest filterRequest = new DepartmentFilterRequest(name, page, size, sort, sortField, address, code);
+        DepartmentFilterRequest filterRequest = new DepartmentFilterRequest(name, page, size, direction.getDirection(), sortField, address, code);
         return new ApplicationDataResponse<>(HttpStatus.OK, departmentService.getAllDepartmentsWithPaging(filterRequest));
     }
 
@@ -58,6 +61,12 @@ public class DepartmentController {
         Department department = departmentService.getDepartmentByID(id);
         Department convert = Mapper.map(department, request);
         return new ApplicationDataResponse<>(HttpStatus.OK, departmentService.updateDepartment(convert));
+    }
+
+    @RequestMapping(value = "/departments/moveEmployee", method = RequestMethod.PUT)
+    public ApplicationDataResponse<String> updateDepartment( @Valid @RequestBody MoveEmployeeRequest request) {
+        departmentService.moveEmployeesToOtherDepartment(request);
+        return new ApplicationDataResponse<>(HttpStatus.OK, "Moved employee successfully!");
     }
 
     @RequestMapping(value = "/departments/{id}", method = RequestMethod.DELETE)

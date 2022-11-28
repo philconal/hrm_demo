@@ -23,6 +23,6 @@ public class EmployeeFilterRequest {
 //    private String departmentCode;
     int page;
     int size;
-    boolean sort;
+    String direction;
     String sortField;
 }

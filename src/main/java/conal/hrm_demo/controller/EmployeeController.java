@@ -5,14 +5,15 @@ import conal.hrm_demo.dto.request.CreateEmployeeRequest;
 import conal.hrm_demo.dto.request.EmployeeFilterRequest;
 import conal.hrm_demo.dto.request.UpdateEmployeeRequest;
 import conal.hrm_demo.dto.response.ApplicationDataResponse;
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Department;
 import conal.hrm_demo.entity.Employee;
+import conal.hrm_demo.entity.enums.Direction;
 import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.services.DepartmentService;
 import conal.hrm_demo.services.EmployeeService;
 import conal.hrm_demo.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +33,11 @@ public class EmployeeController {
     }
 
     @RequestMapping(value = "/employees/paging", method = RequestMethod.GET)
-    public ApplicationDataResponse<Page<Employee>> getAllEmployees(
+    public ApplicationDataResponse<CustomPage<Employee>> getAllEmployees(
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "sort", required = false, defaultValue = "false") boolean sort,
-            @RequestParam(value = "page") int page,
-            @RequestParam(value = "size") int size,
+            @RequestParam(value = "direction", defaultValue = "UNSORTED") Direction direction,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "code", required = false) String code,
             @RequestParam(value = "sortField", required = false, defaultValue = "") String sortField,
@@ -53,21 +54,21 @@ public class EmployeeController {
     ) {
         EmployeeFilterRequest filterRequest = new EmployeeFilterRequest(
                 name, code, phone,
-                email, address, page, size, sort, sortField
+                email, address, page, size, direction.getDirection(), sortField
         );
+
         return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesWithPaging(filterRequest));
     }
 
     @RequestMapping(value = "/employees/department/{id}", method = RequestMethod.GET)
-    public ApplicationDataResponse<Page<Employee>> getAllEmployees(
+    public ApplicationDataResponse<CustomPage<Employee>> getAllEmployees(
             @PathVariable("id") Long id,
             @RequestParam(value = "sort", required = false, defaultValue = "false") boolean sort,
-            @RequestParam(value = "page") int page,
-            @RequestParam(value = "size") int size,
+            @RequestParam(value = "page",defaultValue = "1") int page,
+            @RequestParam(value = "size",defaultValue = "10") int size,
             @RequestParam(value = "sortField", required = false, defaultValue = "") String sortField
 
     ) {
-
         return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesByDepartmentId(id, page, size, sort, sortField));
     }
 

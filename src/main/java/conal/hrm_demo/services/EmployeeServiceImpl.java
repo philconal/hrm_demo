@@ -1,13 +1,12 @@
 package conal.hrm_demo.services;
 
 import conal.hrm_demo.dto.request.EmployeeFilterRequest;
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Employee;
-import conal.hrm_demo.entity.enums.Order;
 import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.repository.EmployeeRepository;
 import conal.hrm_demo.repository.specification.EmployeeSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,11 +21,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    @Autowired
-    private EmployeeRepository employeeRepository;
 
     @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
     private EmployeeSpecification employeeSpecification;
+
 
     @Override
     public Employee saveEmployee(Employee employee) {
@@ -71,35 +73,33 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Page<Employee> getAllEmployeesWithPaging(EmployeeFilterRequest filterRequest) {
+    public CustomPage<Employee> getAllEmployeesWithPaging(EmployeeFilterRequest filterRequest) {
         Specification<Employee> specification = employeeSpecification.doFilter(
                 filterRequest.getName(),
-                filterRequest.isSort(),
+                filterRequest.getDirection(),
                 filterRequest.getSortField(),
                 filterRequest.getAddress(),
                 filterRequest.getCode(),
                 filterRequest.getPhone(),
                 filterRequest.getEmail()
-//                filterRequest.getDepartmentCode(),
-//                filterRequest.getDepartmentName(),
-//                filterRequest.getStartedFrom(),
-//                filterRequest.getStartedTo(),
-//                filterRequest.getEndedFrom(),
-//                filterRequest.getEndedTo(),
-//                filterRequest.getSalaryFrom(),
-//                filterRequest.getSalaryTo()
         );
-        Pageable pageable = PageRequest.of(filterRequest.getPage() - 1, filterRequest.getSize());
-        return employeeRepository.findAll(specification, pageable);
+        Pageable pageable = PageRequest.of(filterRequest.getPage(), filterRequest.getSize());
+        return new CustomPage<>(employeeRepository.findAll(specification, pageable));
     }
 
     @Override
-    public Page<Employee> getAllEmployeesByDepartmentId(Long departmentId, int page,
-                                                        int size,
-                                                        boolean sort,
-                                                        String sortField) {
+    public CustomPage<Employee> getAllEmployeesByDepartmentId(Long departmentId, int page,
+                                                              int size,
+                                                              boolean sort,
+                                                              String sortField) {
+        this.departmentService.getDepartmentByID(departmentId);
         Pageable pageable = PageRequest.of(page, size);
-        return employeeRepository.findAllByDepartmentId(pageable, departmentId);
+        return new CustomPage<>(employeeRepository.findAllByDepartmentId(pageable, departmentId));
+    }
+
+    @Override
+    public List<Employee> getAllEmployeesByDepartmentId(Long departmentId) {
+        return employeeRepository.findAllByDepartmentId(departmentId);
     }
 
 
@@ -125,8 +125,5 @@ public class EmployeeServiceImpl implements EmployeeService {
         return list;
     }
 
-    @Override
-    public List<Employee> getEmployeeWithOrderedSalary(Order order) {
-        return null;
-    }
+
 }

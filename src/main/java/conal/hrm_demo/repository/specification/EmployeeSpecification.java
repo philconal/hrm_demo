@@ -1,24 +1,25 @@
 package conal.hrm_demo.repository.specification;
 
 import conal.hrm_demo.entity.Employee;
+import conal.hrm_demo.entity.enums.Direction;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.criteria.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class EmployeeSpecification {
-    public Specification<Employee> doFilter(String name, boolean sort, String sortField, String address, String code, String phone, String email
-            ) {
+    public Specification<Employee> doFilter(String name, String direction, String sortField, String address, String code, String phone, String email
+    ) {
         return (Root<Employee> clazzRoot, CriteriaQuery<?> cq, CriteriaBuilder cb) -> {
             cq.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
@@ -48,11 +49,13 @@ public class EmployeeSpecification {
                 case "email" -> clazzRoot.get("email");
                 default -> clazzRoot.get("createdDate");
             };
-
-            if (sort) {
-                cq.orderBy(cb.asc(orderClause));
-            } else {
-                cq.orderBy(cb.desc(orderClause));
+            if (!direction.equals(Direction.UNSORTED.getDirection())) {
+                if (direction.equals(Direction.ASC.getDirection())) {
+                    cq.orderBy(cb.asc(orderClause));
+                }
+                if (direction.equals(Direction.DESC.getDirection())) {
+                    cq.orderBy(cb.desc(orderClause));
+                }
             }
 
             return cb.and(predicates.toArray(new Predicate[]{}));
@@ -75,7 +78,8 @@ public class EmployeeSpecification {
     private void addFilterByProperty(List<Predicate> predicates, Root<Employee> clazzRoot, CriteriaQuery<?> cq, CriteriaBuilder cb, String property, String queryName) {
         if (property != null && !property.trim().isEmpty()) {
             String propertySearch = property.trim();
-            predicates.add(cb.or(cb.like(clazzRoot.get(queryName), "%" + propertySearch + "%")));
+            predicates.add(cb.or(
+                    cb.like(cb.lower(clazzRoot.get(queryName)), "%" + propertySearch.toLowerCase() + "%")));
         }
     }
 }

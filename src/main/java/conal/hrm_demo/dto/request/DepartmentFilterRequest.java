@@ -11,7 +11,7 @@ public class DepartmentFilterRequest {
     private String name;
     int page;
     int size;
-    boolean sort;
+    String direction;
     String sortField;
     String address;
     String code;

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,6 +18,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 
     @Query(nativeQuery = true, value = "select * from employee e where e.department_id =:id and e.is_active = true")
     Page<Employee> findAllByDepartmentId(Pageable pageable, Long id);
+
+    @Query(nativeQuery = true, value = "select * from employee e where e.department_id =:id and e.is_active = true")
+    List<Employee> findAllByDepartmentId(Long id);
 
     boolean existsByCode(String code);
 
