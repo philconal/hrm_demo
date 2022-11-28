@@ -21,6 +21,10 @@ public interface EmployeeService {
     Employee updateEmployee(Employee employee);
 
     Page<Employee> getAllEmployeesWithPaging(EmployeeFilterRequest filterRequest);
+    Page<Employee> getAllEmployeesByDepartmentId(Long departmentId, int page,
+    int size,
+    boolean sort,
+    String sortField);
 
     Employee getNthPaidEmployee(int position);
 

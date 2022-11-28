@@ -18,7 +18,6 @@ public class UpdateEmployeeRequest {
     private String address;
     private Date startedDate;
     private Date endedDate;
-    private boolean isActive;
-    private Long departmentId;
+    private String departmentId;
     private String code;
 }

@@ -1,6 +1,5 @@
 package conal.hrm_demo.services;
 
-import com.mysema.query.BooleanBuilder;
 import conal.hrm_demo.dto.request.DepartmentFilterRequest;
 import conal.hrm_demo.entity.Department;
 import conal.hrm_demo.exception.ApplicationException;
@@ -38,6 +37,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department getDepartmentByID(Long id) {
+        System.out.println(id);
         Optional<Department> department = departmentRepository.findById(id);
         return department.orElseThrow(() -> new ApplicationException(HttpStatus.BAD_REQUEST, "Department is not found!!"));
     }

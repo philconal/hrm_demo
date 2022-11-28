@@ -17,7 +17,8 @@ import java.util.*;
 
 @Component
 public class EmployeeSpecification {
-    public Specification<Employee> doFilter(String name, boolean sort, String sortField, String address, String code, String phone, String email, String departmentCode, String departmentName, String startedFrom, String startedTo, String endedFrom, String endedTo, String salaryFrom, String salaryTo) {
+    public Specification<Employee> doFilter(String name, boolean sort, String sortField, String address, String code, String phone, String email
+            ) {
         return (Root<Employee> clazzRoot, CriteriaQuery<?> cq, CriteriaBuilder cb) -> {
             cq.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
@@ -25,22 +26,22 @@ public class EmployeeSpecification {
             predicates.add(cb.equal(clazzRoot.get("isActive"), true));
 
             addFilterByProperty(predicates, clazzRoot, cq, cb, code, "code");
-            addFilterByProperty(predicates, clazzRoot, cq, cb, name, "name");
+            addFilterByProperty(predicates, clazzRoot, cq, cb, name, "firstName");
             addFilterByProperty(predicates, clazzRoot, cq, cb, address, "address");
             addFilterByProperty(predicates, clazzRoot, cq, cb, phone, "phone");
             addFilterByProperty(predicates, clazzRoot, cq, cb, email, "email");
-            try {
-                if ((startedFrom != null && startedTo != null) && (!startedFrom.trim().isEmpty() && !startedTo.trim().isEmpty())) {
-                    Instant startFrom = fromString(startedFrom);
-                    Instant startTo = fromString(startedTo);
-                    predicates.add(cb.between(clazzRoot.get("startedDate"), startFrom, startTo));
-                }
-            } catch (DateTimeParseException dtpe) {
-                // invalid format, consider log the error, etcetera
-                dtpe.printStackTrace();
-            }
+//            try {
+//                if ((startedFrom != null && startedTo != null) && (!startedFrom.trim().isEmpty() && !startedTo.trim().isEmpty())) {
+//                    Instant startFrom = fromString(startedFrom);
+//                    Instant startTo = fromString(startedTo);
+//                    predicates.add(cb.between(clazzRoot.get("startedDate"), startFrom, startTo));
+//                }
+//            } catch (DateTimeParseException dtpe) {
+//                // invalid format, consider log the error, etcetera
+//                dtpe.printStackTrace();
+//            }
             Path orderClause = switch (sortField.trim()) {
-                case "name" -> clazzRoot.get("name");
+                case "name" -> clazzRoot.get("firstName");
                 case "address" -> clazzRoot.get("address");
                 case "code" -> clazzRoot.get("code");
                 case "phone" -> clazzRoot.get("phone");

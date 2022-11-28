@@ -53,7 +53,6 @@ public class Mapper {
     }
 
     public static Employee map(Employee employee, UpdateEmployeeRequest request) {
-        employee.setActive(request.isActive() ? request.isActive() : employee.isActive());
         employee.setAddress(request.getAddress() != null ? request.getAddress() : employee.getAddress());
         employee.setEmail(request.getEmail() != null ? request.getEmail() : employee.getEmail());
         employee.setFirstName(request.getFirstName() != null ? request.getFirstName() : employee.getFirstName());

@@ -1,7 +1,6 @@
 package conal.hrm_demo.services;
 
 import conal.hrm_demo.dto.request.EmployeeFilterRequest;
-import conal.hrm_demo.entity.Department;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.enums.Order;
 import conal.hrm_demo.exception.ApplicationException;
@@ -15,7 +14,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,18 +79,27 @@ public class EmployeeServiceImpl implements EmployeeService {
                 filterRequest.getAddress(),
                 filterRequest.getCode(),
                 filterRequest.getPhone(),
-                filterRequest.getEmail(),
-                filterRequest.getDepartmentCode(),
-                filterRequest.getDepartmentName(),
-                filterRequest.getStartedFrom(),
-                filterRequest.getStartedTo(),
-                filterRequest.getEndedFrom(),
-                filterRequest.getEndedTo(),
-                filterRequest.getSalaryFrom(),
-                filterRequest.getSalaryTo()
+                filterRequest.getEmail()
+//                filterRequest.getDepartmentCode(),
+//                filterRequest.getDepartmentName(),
+//                filterRequest.getStartedFrom(),
+//                filterRequest.getStartedTo(),
+//                filterRequest.getEndedFrom(),
+//                filterRequest.getEndedTo(),
+//                filterRequest.getSalaryFrom(),
+//                filterRequest.getSalaryTo()
         );
         Pageable pageable = PageRequest.of(filterRequest.getPage() - 1, filterRequest.getSize());
         return employeeRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public Page<Employee> getAllEmployeesByDepartmentId(Long departmentId, int page,
+                                                        int size,
+                                                        boolean sort,
+                                                        String sortField) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeRepository.findAllByDepartmentId(pageable, departmentId);
     }
 
 

@@ -9,6 +9,9 @@ import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.Salary;
 import conal.hrm_demo.repository.SalaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +29,11 @@ public class SalaryServiceImpl implements SalaryService {
         return salaryRepository.save(Mapper.map(employee, request));
     }
 
+    @Override
+    public void saveSalary(Salary request) {
+        salaryRepository.save(request);
+    }
+
     public Salary updateSalary(UpdateSalaryRequest request) {
         Salary salary = this.findSalaryById(request.getId());
         Employee employee = employeeService.getEmployeeByID(request.getEmployee_id());
@@ -38,6 +46,12 @@ public class SalaryServiceImpl implements SalaryService {
             throw new IllegalArgumentException("Salary not found!");
         });
         return salary.get();
+    }
+
+    @Override
+    public Page<Salary> getAllSalaryByEmployeeId(SalaryFilterRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        return salaryRepository.findAllByEmployeeId(pageable, request.getDepartmentId());
     }
 
     @Override

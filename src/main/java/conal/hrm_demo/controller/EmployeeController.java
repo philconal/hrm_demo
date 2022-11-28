@@ -2,7 +2,6 @@ package conal.hrm_demo.controller;
 
 import conal.hrm_demo.controller.helper.Mapper;
 import conal.hrm_demo.dto.request.CreateEmployeeRequest;
-import conal.hrm_demo.dto.request.DepartmentFilterRequest;
 import conal.hrm_demo.dto.request.EmployeeFilterRequest;
 import conal.hrm_demo.dto.request.UpdateEmployeeRequest;
 import conal.hrm_demo.dto.response.ApplicationDataResponse;
@@ -42,22 +41,34 @@ public class EmployeeController {
             @RequestParam(value = "code", required = false) String code,
             @RequestParam(value = "sortField", required = false, defaultValue = "") String sortField,
             @RequestParam(value = "phone", required = false) String phone,
-            @RequestParam(value = "email", required = false) String email,
-            @RequestParam(value = "departmentCode", required = false) String departmentCode,
-            @RequestParam(value = "departmentName", required = false) String departmentName,
-            @RequestParam(value = "startedFrom", required = false) String startedFrom,
-            @RequestParam(value = "startedTo", required = false) String startedTo,
-            @RequestParam(value = "endedFrom", required = false) String endedFrom,
-            @RequestParam(value = "endedTo", required = false) String endedTo,
-            @RequestParam(value = "salaryFrom", required = false) String salaryFrom,
-            @RequestParam(value = "salaryTo", required = false) String salaryTo) {
+            @RequestParam(value = "email", required = false) String email
+//            @RequestParam(value = "departmentCode", required = false) String departmentCode,
+//            @RequestParam(value = "departmentName", required = false) String departmentName,
+//            @RequestParam(value = "startedFrom", required = false) String startedFrom,
+//            @RequestParam(value = "startedTo", required = false) String startedTo,
+//            @RequestParam(value = "endedFrom", required = false) String endedFrom,
+//            @RequestParam(value = "endedTo", required = false) String endedTo,
+//            @RequestParam(value = "salaryFrom", required = false) String salaryFrom,
+//            @RequestParam(value = "salaryTo", required = false) String salaryTo
+    ) {
         EmployeeFilterRequest filterRequest = new EmployeeFilterRequest(
-                salaryFrom, salaryTo, name, code, phone,
-                email, address, startedFrom, startedTo,
-                endedFrom, endedTo, departmentName,
-                departmentCode, page, size, sort, sortField
+                name, code, phone,
+                email, address, page, size, sort, sortField
         );
         return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesWithPaging(filterRequest));
+    }
+
+    @RequestMapping(value = "/employees/department/{id}", method = RequestMethod.GET)
+    public ApplicationDataResponse<Page<Employee>> getAllEmployees(
+            @PathVariable("id") Long id,
+            @RequestParam(value = "sort", required = false, defaultValue = "false") boolean sort,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size,
+            @RequestParam(value = "sortField", required = false, defaultValue = "") String sortField
+
+    ) {
+
+        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesByDepartmentId(id, page, size, sort, sortField));
     }
 
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.GET)
@@ -65,10 +76,10 @@ public class EmployeeController {
         return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getEmployeeByID(id));
     }
 
-    @RequestMapping(value = "/employees/nth", method = RequestMethod.GET)
-    public ApplicationDataResponse<Employee> getNthPaid() {
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getNthPaidEmployee(1));
-    }
+//    @RequestMapping(value = "/employees/nth", method = RequestMethod.GET)
+//    public ApplicationDataResponse<Employee> getNthPaid() {
+//        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getNthPaidEmployee(1));
+//    }
 
     @RequestMapping(value = "/employees", method = RequestMethod.POST)
     public ApplicationDataResponse<Employee> addEmployee(@Valid @RequestBody CreateEmployeeRequest request) {
@@ -86,15 +97,13 @@ public class EmployeeController {
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.PUT)
     public ApplicationDataResponse<Employee> updateEmployee(@PathVariable("id") Long id, @Valid @RequestBody UpdateEmployeeRequest request) {
         Employee employeeByID = employeeService.getEmployeeByID(id);
-        Employee employee = Mapper.map(employeeByID, request);
-        System.out.println(request.getDepartmentId());
 
-        if (request.getDepartmentId() != null) {
-            System.out.println("inside if");
-            Department department = departmentService.getDepartmentByID(request.getDepartmentId());
+        Employee employee = Mapper.map(employeeByID, request);
+
+        if (request.getDepartmentId() != null && !request.getDepartmentId().trim().isBlank()) {
+            Department department = departmentService.getDepartmentByID(Long.parseLong(request.getDepartmentId()));
             employee.setDepartment(department);
         }
-        System.out.println("Department: " + employee);
         return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.updateEmployee(employee));
     }
 
