@@ -20,7 +20,7 @@ public interface EmployeeService {
 
     Employee updateEmployee(Employee employee);
 
-    Page<List<Employee>> getAllEmployeesWithPaging(EmployeeFilterRequest filterRequest);
+    Page<Employee> getAllEmployeesWithPaging(EmployeeFilterRequest filterRequest);
 
     Employee getNthPaidEmployee(int position);
 

@@ -2,6 +2,8 @@ package conal.hrm_demo.controller;
 
 import conal.hrm_demo.controller.helper.Mapper;
 import conal.hrm_demo.dto.request.CreateEmployeeRequest;
+import conal.hrm_demo.dto.request.DepartmentFilterRequest;
+import conal.hrm_demo.dto.request.EmployeeFilterRequest;
 import conal.hrm_demo.dto.request.UpdateEmployeeRequest;
 import conal.hrm_demo.dto.response.ApplicationDataResponse;
 import conal.hrm_demo.entity.Department;
@@ -11,6 +13,7 @@ import conal.hrm_demo.services.DepartmentService;
 import conal.hrm_demo.services.EmployeeService;
 import conal.hrm_demo.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,34 @@ public class EmployeeController {
     @RequestMapping(value = "/employees", method = RequestMethod.GET)
     public ApplicationDataResponse<List<Employee>> getAllEmployees() {
         return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployees(null));
+    }
+
+    @RequestMapping(value = "/employees/paging", method = RequestMethod.GET)
+    public ApplicationDataResponse<Page<Employee>> getAllEmployees(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "sort", required = false, defaultValue = "false") boolean sort,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "sortField", required = false, defaultValue = "") String sortField,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "departmentCode", required = false) String departmentCode,
+            @RequestParam(value = "departmentName", required = false) String departmentName,
+            @RequestParam(value = "startedFrom", required = false) String startedFrom,
+            @RequestParam(value = "startedTo", required = false) String startedTo,
+            @RequestParam(value = "endedFrom", required = false) String endedFrom,
+            @RequestParam(value = "endedTo", required = false) String endedTo,
+            @RequestParam(value = "salaryFrom", required = false) String salaryFrom,
+            @RequestParam(value = "salaryTo", required = false) String salaryTo) {
+        EmployeeFilterRequest filterRequest = new EmployeeFilterRequest(
+                salaryFrom, salaryTo, name, code, phone,
+                email, address, startedFrom, startedTo,
+                endedFrom, endedTo, departmentName,
+                departmentCode, page, size, sort, sortField
+        );
+        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesWithPaging(filterRequest));
     }
 
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.GET)
@@ -68,8 +99,9 @@ public class EmployeeController {
     }
 
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.DELETE)
-    public ApplicationDataResponse<Employee> deleteEmployee(@PathVariable("id") Long id) {
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.deleteEmployee(id));
+    public ApplicationDataResponse<String> deleteEmployee(@PathVariable("id") Long id) {
+        employeeService.deleteEmployee(id);
+        return new ApplicationDataResponse<>(HttpStatus.OK, "Delete Employee successfully");
     }
 
 

@@ -27,12 +27,11 @@ public class Mapper {
     }
 
     public static Department map(Department department, UpdateDepartmentRequest request) {
-        department.setActive(request.isActive());
-        department.setCode(request.getCode()!= null ? request.getCode() : department.getCode());
+        department.setCode(request.getCode() != null ? request.getCode() : department.getCode());
         department.setAddress((request.getAddress() != null ? request.getAddress() : department.getAddress()));
         department.setName((request.getName() != null ? request.getName() : department.getName()));
-        department.setMaxNoOfEmployee(request.getMaxNoOfEmployee());
-        department.setCurrentNoOfEmployee(request.getCurrentNoOfEmployee());
+        department.setMaxNoOfEmployee(request.getMaxNoOfEmployee() != null ? Integer.parseInt(request.getMaxNoOfEmployee()) : department.getMaxNoOfEmployee());
+        department.setCurrentNoOfEmployee(request.getCurrentNoOfEmployee() != null ? Integer.parseInt(request.getCurrentNoOfEmployee()) : department.getCurrentNoOfEmployee());
         department.setUpdatedDate(new Date());
         return department;
     }
@@ -54,13 +53,13 @@ public class Mapper {
     }
 
     public static Employee map(Employee employee, UpdateEmployeeRequest request) {
-        employee.setActive(request.isActive()? request.isActive() : employee.isActive());
-        employee.setAddress(request.getAddress() !=null? request.getAddress() : employee.getAddress());
-        employee.setEmail(request.getEmail()!=null? request.getEmail() : employee.getEmail());
-        employee.setFirstName(request.getFirstName()!=null? request.getFirstName() : employee.getFirstName());
-        employee.setLastName(request.getLastName()!=null? request.getLastName() : employee.getLastName());
-        employee.setPhone(request.getPhone()!=null? request.getPhone() : employee.getPhone());
-        employee.setCode(request.getCode()!=null? request.getCode() : employee.getCode());
+        employee.setActive(request.isActive() ? request.isActive() : employee.isActive());
+        employee.setAddress(request.getAddress() != null ? request.getAddress() : employee.getAddress());
+        employee.setEmail(request.getEmail() != null ? request.getEmail() : employee.getEmail());
+        employee.setFirstName(request.getFirstName() != null ? request.getFirstName() : employee.getFirstName());
+        employee.setLastName(request.getLastName() != null ? request.getLastName() : employee.getLastName());
+        employee.setPhone(request.getPhone() != null ? request.getPhone() : employee.getPhone());
+        employee.setCode(request.getCode() != null ? request.getCode() : employee.getCode());
         employee.setStartedDate(request.getStartedDate());
         employee.setEndedDate(request.getEndedDate());
         employee.setUpdatedDate(new Date());

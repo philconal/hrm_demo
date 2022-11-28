@@ -12,11 +12,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateDepartmentRequest {
-    private Long id;
     private String name;
     private String address;
-    private int maxNoOfEmployee;
-    private int currentNoOfEmployee;
-    private boolean isActive;
+    private String maxNoOfEmployee;
+    private String currentNoOfEmployee;
     private String code;
 }
