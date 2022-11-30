@@ -22,6 +22,7 @@ public class Salary {
     private double bonus;
     private String note;
     private String code;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
     private Date datePaid;
     @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)

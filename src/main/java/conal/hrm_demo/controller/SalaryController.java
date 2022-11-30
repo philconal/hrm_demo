@@ -1,6 +1,7 @@
 package conal.hrm_demo.controller;
 
 
+import conal.hrm_demo.dto.request.CSVFilterRequest;
 import conal.hrm_demo.dto.request.CreateSalaryRequest;
 import conal.hrm_demo.dto.request.SalaryFilterRequest;
 import conal.hrm_demo.dto.request.UpdateSalaryRequest;
@@ -8,8 +9,13 @@ import conal.hrm_demo.dto.response.ApplicationDataResponse;
 import conal.hrm_demo.entity.Salary;
 import conal.hrm_demo.services.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,6 +36,27 @@ public class SalaryController {
         Salary salary = salaryService.addSalary(request);
         // map to response
         return new ApplicationDataResponse<>(HttpStatus.OK, salary);
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> getFile(
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate,
+            @RequestParam(value = "departmentId", required = false) String departmentId,
+            @RequestParam(value = "employeeId", required = false) String employeeId
+    ) {
+        final var request = CSVFilterRequest.builder().fromDate(fromDate)
+                .toDate(toDate)
+                .departmentId(departmentId)
+                .employeeId(employeeId)
+                .build();
+        String filename = "salaries.csv";
+        InputStreamResource file = new InputStreamResource(salaryService.downloadSalaryFile(request));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(file);
     }
 
     @RequestMapping(value = "/salary/paging", method = RequestMethod.GET)

@@ -36,7 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getAllEmployees(EmployeeFilterRequest filterRequest) {
+    public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
@@ -105,7 +105,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getNthPaidEmployee(int position) {
-        final var maps = findTotalPaymentOfEachEmployee(this.getAllEmployees(null));
+        final var maps = findTotalPaymentOfEachEmployee(this.getAllEmployees());
         for (Map.Entry<Double, Long> map : maps.entrySet()
         ) {
             System.out.println(map);

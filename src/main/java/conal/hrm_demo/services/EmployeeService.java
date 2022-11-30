@@ -9,7 +9,7 @@ import java.util.List;
 public interface EmployeeService {
     Employee saveEmployee(Employee employee);
 
-    List<Employee> getAllEmployees(EmployeeFilterRequest filterRequest);
+    List<Employee> getAllEmployees();
 
     Employee deleteEmployee(Long id);
 

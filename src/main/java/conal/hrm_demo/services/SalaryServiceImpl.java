@@ -1,19 +1,23 @@
 package conal.hrm_demo.services;
 
 
+import conal.hrm_demo.controller.helper.CSVHelper;
 import conal.hrm_demo.controller.helper.Mapper;
+import conal.hrm_demo.dto.request.CSVFilterRequest;
 import conal.hrm_demo.dto.request.CreateSalaryRequest;
 import conal.hrm_demo.dto.request.SalaryFilterRequest;
 import conal.hrm_demo.dto.request.UpdateSalaryRequest;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.Salary;
 import conal.hrm_demo.repository.SalaryRepository;
+import conal.hrm_demo.repository.specification.SalarySpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +27,9 @@ public class SalaryServiceImpl implements SalaryService {
     private SalaryRepository salaryRepository;
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private SalarySpecification salarySpecification;
 
     public Salary addSalary(CreateSalaryRequest request) {
         Employee employee = employeeService.getEmployeeByID(request.getEmployee_id());
@@ -38,6 +45,11 @@ public class SalaryServiceImpl implements SalaryService {
         Salary salary = this.findSalaryById(request.getId());
         Employee employee = employeeService.getEmployeeByID(request.getEmployee_id());
         return salaryRepository.save(Mapper.map(salary, employee, request));
+    }
+
+    @Override
+    public ByteArrayInputStream downloadSalaryFile(CSVFilterRequest request) {
+        return CSVHelper.salariesToCSV(this.getAllSalaries(request));
     }
 
     public Salary findSalaryById(Long id) {
@@ -56,7 +68,13 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public List<Salary> getAllSalariesOfAnEmployee(Long employeeId) {
+
         return null;
+    }
+
+    @Override
+    public List<Salary> getAllSalaries(CSVFilterRequest request) {
+        return salaryRepository.findAll(salarySpecification.doFilter(request.getFromDate(), request.getToDate(), request.getEmployeeId(), request.getDepartmentId()));
     }
 
     @Override

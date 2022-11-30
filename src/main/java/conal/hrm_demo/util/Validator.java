@@ -43,8 +43,6 @@ public class Validator {
     }
 
 
-
-
     public static void checkPhoneFormat(String text) {
         if (text == null || text.isBlank())
             throw new ApplicationException(HttpStatus.BAD_REQUEST, "Phone number is empty or null!");

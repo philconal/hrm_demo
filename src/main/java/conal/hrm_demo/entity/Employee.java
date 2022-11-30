@@ -33,7 +33,9 @@ public class Employee implements Serializable {
     @NotBlank(message = "Email should not be blank")
     private String email;
     private String address;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
     private Date startedDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
     private Date endedDate;
     private boolean isActive;
     @NotBlank(message = ParamError.FIELD_NAME)

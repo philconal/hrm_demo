@@ -29,7 +29,7 @@ public class EmployeeController {
 
     @RequestMapping(value = "/employees", method = RequestMethod.GET)
     public ApplicationDataResponse<List<Employee>> getAllEmployees() {
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployees(null));
+        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployees());
     }
 
     @RequestMapping(value = "/employees/paging", method = RequestMethod.GET)

@@ -13,21 +13,22 @@ public class CustomPage<T> {
     public CustomPage(Page<T> page) {
         this.content = page.getContent();
         this.pageable = new CustomPageable(page.getPageable().getPageNumber(),
-                page.getPageable().getPageSize(), page.getTotalElements());
+                page.getPageable().getPageSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Data
     static
     class CustomPageable {
-        int pageNumber;
-        int pageSize;
-        long totalElements;
+        private int pageNumber;
+        private int pageSize;
+        private long totalElements;
+        private int totalPages;
 
-        public CustomPageable(int pageNumber, int pageSize, long totalElements) {
-
+        public CustomPageable(int pageNumber, int pageSize, long totalElements, int totalPages) {
             this.pageNumber = pageNumber;
             this.pageSize = pageSize;
             this.totalElements = totalElements;
+            this.totalPages = totalPages;
         }
     }
 }

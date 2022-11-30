@@ -31,16 +31,7 @@ public class EmployeeSpecification {
             addFilterByProperty(predicates, clazzRoot, cq, cb, address, "address");
             addFilterByProperty(predicates, clazzRoot, cq, cb, phone, "phone");
             addFilterByProperty(predicates, clazzRoot, cq, cb, email, "email");
-//            try {
-//                if ((startedFrom != null && startedTo != null) && (!startedFrom.trim().isEmpty() && !startedTo.trim().isEmpty())) {
-//                    Instant startFrom = fromString(startedFrom);
-//                    Instant startTo = fromString(startedTo);
-//                    predicates.add(cb.between(clazzRoot.get("startedDate"), startFrom, startTo));
-//                }
-//            } catch (DateTimeParseException dtpe) {
-//                // invalid format, consider log the error, etcetera
-//                dtpe.printStackTrace();
-//            }
+
             Path orderClause = switch (sortField.trim()) {
                 case "name" -> clazzRoot.get("firstName");
                 case "address" -> clazzRoot.get("address");
