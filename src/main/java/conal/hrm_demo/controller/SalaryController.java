@@ -6,12 +6,12 @@ import conal.hrm_demo.dto.request.CreateSalaryRequest;
 import conal.hrm_demo.dto.request.SalaryFilterRequest;
 import conal.hrm_demo.dto.request.UpdateSalaryRequest;
 import conal.hrm_demo.dto.response.ApplicationDataResponse;
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Salary;
 import conal.hrm_demo.services.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,14 +28,20 @@ public class SalaryController {
 
     @RequestMapping(value = "salary", method = RequestMethod.GET)
     public ApplicationDataResponse<List<Salary>> getAllSalaries() {
-        return new ApplicationDataResponse<>(HttpStatus.OK, new ArrayList<>());
+        return ApplicationDataResponse.<List<Salary>>builder()
+                .status(HttpStatus.OK)
+                .data(new ArrayList<>())
+                .build();
     }
 
     @RequestMapping(value = "salary", method = RequestMethod.POST)
     public ApplicationDataResponse<Salary> addSalary(@RequestBody CreateSalaryRequest request) {
         Salary salary = salaryService.addSalary(request);
         // map to response
-        return new ApplicationDataResponse<>(HttpStatus.OK, salary);
+        return ApplicationDataResponse.<Salary>builder()
+                .status(HttpStatus.OK)
+                .data(salary)
+                .build();
     }
 
     @GetMapping("/download")
@@ -45,11 +51,14 @@ public class SalaryController {
             @RequestParam(value = "departmentId", required = false) String departmentId,
             @RequestParam(value = "employeeId", required = false) String employeeId
     ) {
-        final var request = CSVFilterRequest.builder().fromDate(fromDate)
-                .toDate(toDate)
-                .departmentId(departmentId)
-                .employeeId(employeeId)
-                .build();
+        final var request =
+                CSVFilterRequest
+                        .builder()
+                        .fromDate(fromDate)
+                        .toDate(toDate)
+                        .departmentId(departmentId)
+                        .employeeId(employeeId)
+                        .build();
         String filename = "salaries.csv";
         InputStreamResource file = new InputStreamResource(salaryService.downloadSalaryFile(request));
 
@@ -60,15 +69,22 @@ public class SalaryController {
     }
 
     @RequestMapping(value = "/salary/paging", method = RequestMethod.GET)
-    public ApplicationDataResponse<Page<Salary>> getAllEmployees(
+    public ApplicationDataResponse<CustomPage<Salary>> getAllEmployees(
             @RequestParam(value = "departmentId") Long id,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        SalaryFilterRequest filterRequest = new SalaryFilterRequest(
-                id, page, size
-        );
-        return new ApplicationDataResponse<>(HttpStatus.OK, salaryService.getAllSalaryByEmployeeId(filterRequest));
+        SalaryFilterRequest filterRequest =
+                SalaryFilterRequest
+                        .builder()
+                        .departmentId(id)
+                        .size(size)
+                        .page(page)
+                        .build();
+        return ApplicationDataResponse.<CustomPage<Salary>>builder()
+                .status(HttpStatus.OK)
+                .data(salaryService.getAllSalaryByEmployeeId(filterRequest))
+                .build();
     }
 
     @RequestMapping(value = "salary/{id}", method = RequestMethod.PUT)
@@ -76,6 +92,9 @@ public class SalaryController {
             @PathVariable("id") Long id, @RequestBody UpdateSalaryRequest request
     ) {
         Salary salary = salaryService.updateSalary(request);
-        return new ApplicationDataResponse<>(HttpStatus.OK, salary);
+        return ApplicationDataResponse.<Salary>builder()
+                .status(HttpStatus.OK)
+                .data(salary)
+                .build();
     }
 }

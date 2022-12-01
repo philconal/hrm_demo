@@ -1,6 +1,6 @@
 package conal.hrm_demo.config;
 
-import conal.hrm_demo.controller.helper.Generate;
+import conal.hrm_demo.util.Generate;
 import conal.hrm_demo.dto.request.CreateSalaryRequest;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.services.ConfigurationService;
@@ -56,16 +56,6 @@ public class ConfigurationSchedule implements SchedulingConfigurer {
 
     private int getNewExecutionTime() {
         conal.hrm_demo.entity.Configuration scheduleTime = configurationService.getScheduleTime();
-//        if (isFirstTimeInit) {
-//            if ((new Date().getMinutes() % configurationService.getCurrentRangeTime()) != 0) {
-//                isFirstTimeInit = false;
-//                System.out.println(configurationService.getCurrentRangeTime() - new Date().getMinutes());
-//                return (configurationService.getCurrentRangeTime() - new Date().getMinutes()) * 60000;
-//            } else {
-//                System.out.println("---------");
-//                return 10000;
-//            }
-//        } else
             return scheduleTime.getScheduleTimeRepeat().intValue();
 
     }

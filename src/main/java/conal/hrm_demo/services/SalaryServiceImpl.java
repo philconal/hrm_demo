@@ -7,12 +7,13 @@ import conal.hrm_demo.dto.request.CSVFilterRequest;
 import conal.hrm_demo.dto.request.CreateSalaryRequest;
 import conal.hrm_demo.dto.request.SalaryFilterRequest;
 import conal.hrm_demo.dto.request.UpdateSalaryRequest;
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.Salary;
 import conal.hrm_demo.repository.SalaryRepository;
 import conal.hrm_demo.repository.specification.SalarySpecification;
+import conal.hrm_demo.util.Generate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -55,15 +56,17 @@ public class SalaryServiceImpl implements SalaryService {
     public Salary findSalaryById(Long id) {
         Optional<Salary> salary = salaryRepository.findByOne(id);
         salary.orElseThrow(() -> {
-            throw new IllegalArgumentException("Salary not found!");
+            throw Generate.throwNotFoundExceptionMessage("Salary not found!");
         });
         return salary.get();
     }
 
     @Override
-    public Page<Salary> getAllSalaryByEmployeeId(SalaryFilterRequest request) {
+    public CustomPage<Salary> getAllSalaryByEmployeeId(SalaryFilterRequest request) {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-        return salaryRepository.findAllByEmployeeId(pageable, request.getDepartmentId());
+        return new CustomPage<>(
+                salaryRepository.findAllByEmployeeId(pageable, request.getDepartmentId())
+        );
     }
 
     @Override

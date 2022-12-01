@@ -1,5 +1,6 @@
 package conal.hrm_demo.repository;
 
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.Salary;
 import org.springframework.data.domain.Page;

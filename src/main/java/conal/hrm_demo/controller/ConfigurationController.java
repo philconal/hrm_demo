@@ -22,11 +22,17 @@ public class ConfigurationController {
             @RequestBody ScheduleTimeOptionRequest request
     ) {
         configurationService.updateScheduleTime(request);
-        return new ApplicationDataResponse<>(HttpStatus.OK, "Update Schedule successfully!!");
+        return ApplicationDataResponse.<String>builder()
+                .status(HttpStatus.OK)
+                .data("Update Schedule successfully!!")
+                .build();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/configuration")
     public ApplicationDataResponse<Configuration> getScheduleTime() {
-        return new ApplicationDataResponse<>(HttpStatus.OK, configurationService.getScheduleTime());
+        return ApplicationDataResponse.<Configuration>builder()
+                .status(HttpStatus.OK)
+                .data(configurationService.getScheduleTime())
+                .build();
     }
 }

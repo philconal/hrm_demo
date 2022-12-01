@@ -1,6 +1,8 @@
-package conal.hrm_demo.controller.helper;
+package conal.hrm_demo.util;
 
+import conal.hrm_demo.exception.ApplicationException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.http.HttpStatus;
 
 import java.util.Random;
 
@@ -27,5 +29,9 @@ public class Generate {
 
     public static String randomPhone() {
         return RandomStringUtils.randomNumeric(10);
+    }
+
+    public static ApplicationException throwNotFoundExceptionMessage(String message) {
+     return     ApplicationException.builder().httpStatus(HttpStatus.BAD_REQUEST).message(message).build();
     }
 }

@@ -29,7 +29,7 @@ public class Salary {
     private Date createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
     private Date updatedDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "salary_id")
     @JsonIgnore
     private Employee employee;

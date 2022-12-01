@@ -4,6 +4,7 @@ import conal.hrm_demo.dto.request.CSVFilterRequest;
 import conal.hrm_demo.dto.request.CreateSalaryRequest;
 import conal.hrm_demo.dto.request.SalaryFilterRequest;
 import conal.hrm_demo.dto.request.UpdateSalaryRequest;
+import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Salary;
 import org.springframework.data.domain.Page;
 
@@ -21,7 +22,7 @@ public interface SalaryService {
 
     Salary findSalaryById(Long id);
 
-    Page<Salary> getAllSalaryByEmployeeId(SalaryFilterRequest request);
+    CustomPage<Salary> getAllSalaryByEmployeeId(SalaryFilterRequest request);
 
     List<Salary> getAllSalariesOfAnEmployee(Long employeeId);
     List<Salary> getAllSalaries(CSVFilterRequest request);

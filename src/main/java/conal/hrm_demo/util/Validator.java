@@ -1,12 +1,8 @@
 package conal.hrm_demo.util;
 
-import conal.hrm_demo.exception.ApplicationException;
-import org.springframework.http.HttpStatus;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static conal.hrm_demo.util.Constant.PASSWORD_NOT_MATCH;
 import static conal.hrm_demo.util.Constant.WRONG_EMAIL_FORMAT;
 
 
@@ -17,11 +13,11 @@ public class Validator {
 
     public static void validateEmail(String emailAddress) {
         if (emailAddress == null || emailAddress.isBlank())
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Email is empty or null!");
+            throw Generate.throwNotFoundExceptionMessage("Email is empty or null!");
         emailAddress = emailAddress.trim();
         boolean isEmailFormat = isEmailFormat(emailAddress);
         if (!isEmailFormat) {
-            throw new ApplicationException(WRONG_EMAIL_FORMAT, HttpStatus.BAD_REQUEST);
+            throw Generate.throwNotFoundExceptionMessage(WRONG_EMAIL_FORMAT);
         }
     }
 
@@ -45,16 +41,16 @@ public class Validator {
 
     public static void checkPhoneFormat(String text) {
         if (text == null || text.isBlank())
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Phone number is empty or null!");
+            throw Generate.throwNotFoundExceptionMessage("Phone number is empty or null!");
         text = text.trim();
-        if (text.length() > 20)
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Maximum phone number is 20 characters.");
-        if (text.length() < 5)
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Minimum phone number is 5 characters.");
         for (char letter : text.toCharArray()) {
             if (!Character.isDigit(letter))
-                throw new ApplicationException(HttpStatus.BAD_REQUEST, "Wrong format phone number.");
+                throw Generate.throwNotFoundExceptionMessage("Wrong format phone number.");
         }
+        if (text.length() > 20)
+            throw Generate.throwNotFoundExceptionMessage("Maximum phone number is 20 characters.");
+        if (text.length() < 5)
+            throw Generate.throwNotFoundExceptionMessage("Minimum phone number is 5 characters.");
     }
 
 }

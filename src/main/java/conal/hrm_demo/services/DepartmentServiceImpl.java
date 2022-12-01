@@ -6,16 +6,14 @@ import conal.hrm_demo.dto.request.MoveEmployeeRequest;
 import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Department;
 import conal.hrm_demo.entity.Employee;
-import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.repository.DepartmentRepository;
 import conal.hrm_demo.repository.EmployeeRepository;
 import conal.hrm_demo.repository.specification.DepartmentSpecification;
+import conal.hrm_demo.util.Generate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,14 +72,16 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department getDepartmentByID(Long id) {
         Optional<Department> department = departmentRepository.findById(id);
-        return department.orElseThrow(() -> new ApplicationException(HttpStatus.BAD_REQUEST, "Department is not found!!"));
+        return department.orElseThrow(() -> {
+            throw Generate.throwNotFoundExceptionMessage("Department is not found!!");
+        });
     }
 
     @Override
     public CustomPage<Department> getAllDepartmentsWithPaging(DepartmentFilterRequest request) {
         Specification<Department> specification = departmentSpecification.doFilter(request.getName(), request.getDirection(), request.getSortField(), request.getAddress(), request.getCode());
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-        return new CustomPage<Department>(departmentRepository.findAll(specification, pageable));
+        return new CustomPage<>(departmentRepository.findAll(specification, pageable));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department createDepartment(Department department) {
         if (departmentRepository.existsByCode(department.getCode()))
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Department Code is already exist");
+            throw Generate.throwNotFoundExceptionMessage("Department Code is already exist");
         return departmentRepository.save(department);
     }
 

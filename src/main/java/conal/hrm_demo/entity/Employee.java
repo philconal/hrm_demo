@@ -46,7 +46,7 @@ public class Employee implements Serializable {
     private Date createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.API_FORMAT_DATE_TIME)
     private Date updatedDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "department_id",
             nullable = false

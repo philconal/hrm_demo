@@ -3,10 +3,9 @@ package conal.hrm_demo.services;
 
 import conal.hrm_demo.dto.request.ScheduleTimeOptionRequest;
 import conal.hrm_demo.entity.Configuration;
-import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.repository.ConfigurationRepository;
+import conal.hrm_demo.util.Generate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,9 +32,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public void updateScheduleTime(ScheduleTimeOptionRequest request) {
         if (request.getScheduleOption() == null || request.getScheduleOption().trim().isBlank())
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Schedule Option is required");
+            throw Generate.throwNotFoundExceptionMessage("Schedule Option is required") ;
         if (request.getTime() % CURRENT_RANGE_TIME != 0)
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Schedule Time must be common multiples by " + CURRENT_RANGE_TIME);
+            throw Generate.throwNotFoundExceptionMessage("Schedule Time must be common multiples by " + CURRENT_RANGE_TIME) ;
         Configuration scheduleTime = getScheduleTime();
         Long scheduleTimeRequest = scheduleTime.getScheduleTimeRepeat();
         switch (request.getScheduleOption()) {
@@ -49,7 +48,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         scheduleTime.setUpdatedDate(new Date());
         CURRENT_RANGE_TIME = request.getTime();
         configurationRepository.save(scheduleTime);
-
     }
 
     @Override

@@ -4,6 +4,7 @@ import conal.hrm_demo.entity.Department;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.Salary;
 import conal.hrm_demo.exception.ApplicationException;
+import conal.hrm_demo.util.Generate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,7 @@ public class SalarySpecification {
                     Date startDateTo = formatter.parse(startedTo);
                     predicates.add(cb.between(clazzRoot.get("datePaid"), startDateFrom, startDateTo));
                 } catch (ParseException e) {
-                    throw new ApplicationException(HttpStatus.BAD_REQUEST, "Date should follow this format (dd-MM-yyyy,HH:mm:ss)");
+                    throw Generate.throwNotFoundExceptionMessage("Date should follow this format (dd-MM-yyyy,HH:mm:ss)");
                 }
             }
             cq.orderBy(List.of(

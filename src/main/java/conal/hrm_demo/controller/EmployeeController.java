@@ -9,9 +9,9 @@ import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Department;
 import conal.hrm_demo.entity.Employee;
 import conal.hrm_demo.entity.enums.Direction;
-import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.services.DepartmentService;
 import conal.hrm_demo.services.EmployeeService;
+import conal.hrm_demo.util.Generate;
 import conal.hrm_demo.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,10 @@ public class EmployeeController {
 
     @RequestMapping(value = "/employees", method = RequestMethod.GET)
     public ApplicationDataResponse<List<Employee>> getAllEmployees() {
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployees());
+        return ApplicationDataResponse.<List<Employee>>builder()
+                .status(HttpStatus.OK)
+                .data(employeeService.getAllEmployees())
+                .build();
     }
 
     @RequestMapping(value = "/employees/paging", method = RequestMethod.GET)
@@ -52,29 +55,46 @@ public class EmployeeController {
 //            @RequestParam(value = "salaryFrom", required = false) String salaryFrom,
 //            @RequestParam(value = "salaryTo", required = false) String salaryTo
     ) {
-        EmployeeFilterRequest filterRequest = new EmployeeFilterRequest(
-                name, code, phone,
-                email, address, page, size, direction.getDirection(), sortField
-        );
-
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesWithPaging(filterRequest));
+        EmployeeFilterRequest filterRequest =
+                EmployeeFilterRequest
+                        .builder()
+                        .name(name)
+                        .phone(phone)
+                        .code(code)
+                        .email(email)
+                        .address(address)
+                        .page(page)
+                        .size(size)
+                        .direction(direction.getDirection())
+                        .sortField(sortField)
+                        .build();
+        return ApplicationDataResponse.<CustomPage<Employee>>builder()
+                .status(HttpStatus.OK)
+                .data(employeeService.getAllEmployeesWithPaging(filterRequest))
+                .build();
     }
 
     @RequestMapping(value = "/employees/department/{id}", method = RequestMethod.GET)
     public ApplicationDataResponse<CustomPage<Employee>> getAllEmployees(
             @PathVariable("id") Long id,
             @RequestParam(value = "sort", required = false, defaultValue = "false") boolean sort,
-            @RequestParam(value = "page",defaultValue = "1") int page,
-            @RequestParam(value = "size",defaultValue = "10") int size,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sortField", required = false, defaultValue = "") String sortField
 
     ) {
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getAllEmployeesByDepartmentId(id, page, size, sort, sortField));
+        return ApplicationDataResponse.<CustomPage<Employee>>builder()
+                .status(HttpStatus.OK)
+                .data(employeeService.getAllEmployeesByDepartmentId(id, page, size, sort, sortField))
+                .build();
     }
 
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.GET)
     public ApplicationDataResponse<Employee> getEmployeeById(@PathVariable("id") Long id) {
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.getEmployeeByID(id));
+        return ApplicationDataResponse.<Employee>builder()
+                .status(HttpStatus.OK)
+                .data(employeeService.getEmployeeByID(id))
+                .build();
     }
 
 //    @RequestMapping(value = "/employees/nth", method = RequestMethod.GET)
@@ -87,12 +107,15 @@ public class EmployeeController {
         Validator.checkPhoneFormat(request.getPhone());
         Validator.validateEmail(request.getEmail());
         if (request.getCode() == null) {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Employee Code should not be blank!");
+            throw Generate.throwNotFoundExceptionMessage("Employee Code should not be blank!");
         }
         Employee employee = Mapper.map(request);
         Department department = departmentService.getDepartmentByID(request.getDepartmentId());
         employee.setDepartment(department);
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.addEmployee(employee));
+        return ApplicationDataResponse.<Employee>builder()
+                .status(HttpStatus.OK)
+                .data(employeeService.addEmployee(employee))
+                .build();
     }
 
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.PUT)
@@ -105,13 +128,19 @@ public class EmployeeController {
             Department department = departmentService.getDepartmentByID(Long.parseLong(request.getDepartmentId()));
             employee.setDepartment(department);
         }
-        return new ApplicationDataResponse<>(HttpStatus.OK, employeeService.updateEmployee(employee));
+        return ApplicationDataResponse.<Employee>builder()
+                .status(HttpStatus.OK)
+                .data(employeeService.updateEmployee(employee))
+                .build();
     }
 
     @RequestMapping(value = "/employees/{id}", method = RequestMethod.DELETE)
     public ApplicationDataResponse<String> deleteEmployee(@PathVariable("id") Long id) {
         employeeService.deleteEmployee(id);
-        return new ApplicationDataResponse<>(HttpStatus.OK, "Delete Employee successfully");
+        return ApplicationDataResponse.<String>builder()
+                .status(HttpStatus.OK)
+                .data("Delete Employee successfully")
+                .build();
     }
 
 

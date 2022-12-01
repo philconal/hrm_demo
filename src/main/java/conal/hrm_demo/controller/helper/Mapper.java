@@ -11,19 +11,18 @@ import java.util.Date;
 
 @Data
 public class Mapper {
-
-
     public static Department map(CreateDepartmentRequest request) {
-        Department department = new Department();
-        department.setActive(true);
-        department.setAddress(request.getAddress());
-        department.setName(request.getName());
-        department.setCode(request.getCode());
-        department.setMaxNoOfEmployee(request.getMaxNoOfEmployee());
-        department.setCurrentNoOfEmployee(request.getCurrentNoOfEmployee());
-        department.setCreatedDate(new Date());
-        department.setUpdatedDate(new Date());
-        return department;
+
+        return Department.builder()
+                .isActive(true)
+                .address(request.getAddress())
+                .name(request.getName())
+                .code(request.getCode())
+                .maxNoOfEmployee(request.getMaxNoOfEmployee())
+                .currentNoOfEmployee(request.getCurrentNoOfEmployee())
+                .createdDate(new Date())
+                .updatedDate(new Date())
+                .build();
     }
 
     public static Department map(Department department, UpdateDepartmentRequest request) {

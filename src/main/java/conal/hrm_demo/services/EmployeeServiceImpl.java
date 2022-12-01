@@ -3,14 +3,14 @@ package conal.hrm_demo.services;
 import conal.hrm_demo.dto.request.EmployeeFilterRequest;
 import conal.hrm_demo.dto.response.CustomPage;
 import conal.hrm_demo.entity.Employee;
-import conal.hrm_demo.exception.ApplicationException;
 import conal.hrm_demo.repository.EmployeeRepository;
 import conal.hrm_demo.repository.specification.EmployeeSpecification;
+import conal.hrm_demo.util.Generate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -52,18 +52,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getEmployeeByID(Long id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         return employee.orElseThrow(() -> {
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Employee is not found!!");
+            throw Generate.throwNotFoundExceptionMessage("Employee is not found!!");
         });
     }
 
     @Override
     public Employee addEmployee(Employee employee) {
         if (employeeRepository.existsByCode(employee.getCode()))
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Employee Code is already exist");
+            throw Generate.throwNotFoundExceptionMessage("Employee Code is already exist");
         if (employeeRepository.existsByEmail(employee.getEmail()))
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Employee email is already exist");
+            throw Generate.throwNotFoundExceptionMessage("Employee email is already exist");
         if (employeeRepository.existsByPhone(employee.getPhone()))
-            throw new ApplicationException(HttpStatus.BAD_REQUEST, "Employee phone is already exist");
+            throw Generate.throwNotFoundExceptionMessage("Employee phone is already exist");
         return this.saveEmployee(employee);
     }
 
